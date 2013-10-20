@@ -1,4 +1,5 @@
 .gitignore
 .gitattributes
-data/
-__pycache__/
+data/*
+__pycache__/*
+*.sublime*
