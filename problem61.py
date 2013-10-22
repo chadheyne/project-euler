@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from itertools import product, permutations
-from collections import defaultdict
 
 
 def triangle(n=45):
@@ -57,32 +56,37 @@ def octagonal(n=19):
         n += 1
 
 figurates = {
-    0: set(filter(lambda n: n % 100 > 10, set(triangle()))),
-    1: set(filter(lambda n: n % 100 > 10, set(square()))),
-    2: set(filter(lambda n: n % 100 > 10, set(pentagonal()))),
-    3: set(filter(lambda n: n % 100 > 10, set(hexagonal()))),
-    4: set(filter(lambda n: n % 100 > 10, set(heptagonal()))),
-    5: set(filter(lambda n: n % 100 > 10, set(octagonal()))),
+    0: tuple(triangle()),
+    1: tuple(square()),
+    2: tuple(pentagonal()),
+    3: tuple(hexagonal()),
+    4: tuple(heptagonal()),
+    5: tuple(octagonal()),
 }
 
 
 def check_cyclical(*numbers):
-    return all(str(numbers[i])[2:] == str(numbers[(i+1) % len(numbers)])[:2]
-               for i in range(len(numbers)))
+    return all(str(numbers[i])[-2:] == str(numbers[(i+1)])[:2]
+               for i in range(len(numbers) - 1))
 
 
 def cyclical():
-    for permutation in permutations(range(1, 6)):
-        permutation = (0, ) + permutation
-        els = map(figurates.get, permutation)
-        for el in product(*els):
-            if check_cyclical(*el):
-                return el
+    for permutation in permutations(range(6)):
+        a, b, c, d, e, f = (figurates.get(i) for i in permutation)
+        for n1, n2 in product(a, b):
+            if not check_cyclical(n1, n2):
+                continue
+            for n3, n4 in product(c, d):
+                if not check_cyclical(n1, n2, n3, n4):
+                    continue
+                for n5, n6 in product(e, f):
+                    if check_cyclical(n1, n2, n3, n4, n5, n6, n1):
+                        return n1, n2, n3, n4, n5, n6
 
 
 def main():
     figurate = cyclical()
-    print(figurate)
+    print(figurate, sum(figurate))
 
 if __name__ == "__main__":
     main()
