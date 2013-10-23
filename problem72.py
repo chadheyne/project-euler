@@ -1,32 +1,37 @@
 #!/usr/bin/env python
 from operator import mul
 from functools import reduce
-from decimal import Decimal
 
 with open('data/primes.txt') as f:
-    PRIMES = []
+    PRIME_FACTORS = []
     for num in f:
-        if int(num) > 1000000:
+        if int(num) <= 1000:
+            PRIME_FACTORS.append(int(num))
+        else:
             break
-        PRIMES.append(int(num))
+TOTIENTS = {pow(num, base): pow(num, base) - pow(num, base - 1) for num in PRIME_FACTORS
+            for base in range(0, 3)}
 
 
 def find_factors(number):
-    for p in PRIMES:
-        if number % p == 0:
-            yield (1 - Decimal(1) / Decimal(p))
-        if p > number:
-            break
+    if number <= 1:
+        return
+    prime = next((x for x in PRIME_FACTORS if not number % x), number)
+    yield prime
+    yield from find_factors(number // prime)
 
 
-def farey_length(limit=1000000, baseline=0):
-    for number in range(2, limit + 1):
-        baseline += int(reduce(mul, find_factors(number), number))
-    return baseline
+def find_totient(number):
+    numbers = list(find_factors(number))
+    for num in set(numbers):
+        power = numbers.count(num)
+        if num ** power not in TOTIENTS:
+            TOTIENTS[num ** power] = pow(num, power) - pow(num, power - 1)
+        yield TOTIENTS[num ** power]
 
 
 def main():
-    sequence = farey_length()
+    sequence = sum(reduce(mul, find_totient(number), 1) for number in range(2, 1000001))
     print(sequence)
 
 
