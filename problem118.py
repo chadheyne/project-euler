@@ -2,9 +2,9 @@
 from itertools import (
     permutations,
     combinations,
-    chain,
     combinations_with_replacement,
-    product)
+    product,
+    chain)
 
 
 def is_prime(num):
@@ -21,6 +21,9 @@ def is_prime(num):
 
 
 def powerset(iterable):
+    """
+        Returns a dictionary of prime numbers of lengths from min(iterable) to max(iterable)
+    """
     s = list(iterable)
     n = len(s)
     return {r: list(filter(is_prime, [int(''.join(map(str, comb))) for comb in permutations(s, r)]))
@@ -28,22 +31,30 @@ def powerset(iterable):
 
 
 def pandigital_sets():
+    """
+        Returns the number of sets that can be created of prime numbers where the digits
+        1-9 each appear only once
+    """
     solutions, base_sets = set(), powerset(range(1, 10))
     set_lengths = [tuple(filter(None, comb)) for comb in
                    combinations_with_replacement(range(10), 10) if sum(comb) == 9]
 
     for set_length in set_lengths:
-        if len(set_length) == 1:
-            a, = set_length
-            for prime in base_sets[a]:
-                solutions.add(prime)
-        else:
-            a, b, *c = (set_length.count(i) for i in set(set_length))
-            c = c[0] if c else None
+        if set_length.count(1) > 4 or set_length.count(9):
+            continue
+        used = [combinations(base_sets[i], set_length.count(i)) for i in set(set_length)]
+        for primes in product(*used):
+            primes = list(chain.from_iterable(primes))
+            if set(''.join(map(str, primes))) != set('123456789'):
+                continue
+            solutions.add(tuple(sorted(primes)))
+
+    return len(solutions)
 
 
 def main():
-    pass
+    answer = pandigital_sets()
+    print(answer)
 
 if __name__ == "__main__":
     main()
