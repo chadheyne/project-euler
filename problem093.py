@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 from itertools import (
-                    combinations,
-                    permutations,
-                    chain,
-                    product)
+    combinations,
+    permutations,
+    chain,
+    product)
 
 
 def partitions(iterable):

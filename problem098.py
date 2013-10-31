@@ -5,7 +5,7 @@ SQUARES = [str(i**2) for i in range(2, 10001)]
 
 def anagram_squares(word_list, word_hash):
     patterns = [str.maketrans(dict(zip(word_hash, perm)))
-               for perm in permutations('0123456789', len(word_hash))]
+                for perm in permutations('0123456789', len(word_hash))]
     t1 = t2 = '0'
     for pattern in patterns:
         t1, t2 = map(lambda word: word.translate(pattern), word_list)
