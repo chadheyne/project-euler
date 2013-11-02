@@ -1,5 +1,0 @@
-.gitignore
-.gitattributes
-data/*
-__pycache__/*
-*.sublime*
